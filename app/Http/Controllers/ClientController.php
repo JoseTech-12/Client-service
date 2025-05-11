@@ -74,14 +74,14 @@ class ClientController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ClientRequest $request, string $id)
+    public function show(Request $request, string $id)
     {
         $token = $request->bearerToken();
         $user = $this->auth->getUserFromToken($token);
 
         if (!$user) {
             return response()->json([
-                'message' => 'No tienes autorizacion'
+                'message' => 'No tienes autorizacionn'
             ], 401);
         }
 
