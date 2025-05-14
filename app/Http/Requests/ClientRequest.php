@@ -22,22 +22,26 @@ class ClientRequest extends FormRequest
      */
     public function rules(): array
     {
-        // Aquí obtenemos el ID del cliente desde la ruta
-        $clientId = $this->route('id');
+        $clientId = $this->route('id'); // ← correcto, porque tu ruta usa {id}
 
         return [
+            'id' => [
+                'required',
+                'string',
+                Rule::unique('clients', 'id')->ignore($this->route('id'), 'id'),
+            ],
             'nombre' => 'required|string|max:100|min:4',
             'email' => [
                 'required',
                 'email',
-                Rule::unique('clients')->ignore($clientId) // Usamos $clientId aquí
+                Rule::unique('clients', 'email')->ignore($this->route('id'), 'id'),
             ],
             'telefono' => [
                 'required',
                 'string',
                 'min:10',
                 'max:10',
-                Rule::unique('clients')->ignore($clientId) // Usamos $clientId aquí también
+                Rule::unique('clients', 'telefono')->ignore($this->route('id'), 'id'),
             ]
         ];
     }

@@ -59,6 +59,7 @@ class ClientController extends Controller
 
         $client = Client::create(
             [
+                'id' => $request->id,
                 'nombre' => $request->nombre,
                 'email' => $request->email,
                 'telefono' => $request->telefono
@@ -93,9 +94,10 @@ class ClientController extends Controller
             ], 404);
         }
 
-        return response()->json([
-            'client' => $client
-        ], 200);
+        return response()->json(
+            $client,
+            200
+        );
     }
 
     /**
@@ -118,17 +120,14 @@ class ClientController extends Controller
             ], 401);
         }
 
-        $client = Client::find($id);
+        $client = Client::where('id', $id)->firstOrFail();
         if (!$client) {
             return response()->json([
                 'message' => 'Cliente no encontrado'
             ], 404);
         }
 
-        $client->nombre = $request->nombre;
-        $client->email = $request->email;
-        $client->telefono = $request->telefono;
-        $client->save();
+        $client->update($request->all());
 
         return response()->json([
             'message' => 'Cliente actualizado correctamente'
@@ -138,7 +137,7 @@ class ClientController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ClientRequest $request, string $id)
+    public function destroy(Request $request, string $id)
     {
         $token = $request->bearerToken();
         $user = $this->auth->getUserFromToken($token);
